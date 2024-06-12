@@ -47,13 +47,79 @@ void SaveHistograms(TDirectory* dir, const std::string& outputDir) {
         }
     }
 }
-void OverlayLiveHistograms(TDirectory* liveDir, const std::string& outputDir) {
+void OverlayLiveHistogramsMax8by8(TDirectory* liveDir, const std::string& outputDir) {
     // Define the histogram names and legend labels
     std::vector<std::string> histNames = {
-        "trigger_28_live_max8x8",
-        "trigger_29_live_max8x8",
-        "trigger_30_live_max8x8",
-        "trigger_31_live_max8x8"
+        "trigger_24_live_max8x8",
+        "trigger_25_live_max8x8",
+        "trigger_26_live_max8x8",
+        "trigger_27_live_max8x8"
+    };
+    std::vector<std::string> legendLabels = {
+        "Photon 1",
+        "Photon 2",
+        "Photon 3",
+        "Photon 4"
+    };
+
+    // Colors for the histograms
+    std::vector<int> colors = {kRed, kBlue, kGreen, kMagenta};
+
+    TCanvas canvas;
+    TLegend legend(0.7, 0.7, 0.9, 0.9);
+    
+    bool firstHist = true;
+    double maxY = 0;
+
+    // First loop to determine the maximum y-axis range
+    for (const auto& histName : histNames) {
+        TH1* hist = (TH1*)liveDir->Get(histName.c_str());
+        if (hist) {
+            std::cout << "Found histogram: " << histName << " with max Y value: " << hist->GetMaximum() << std::endl;
+            double currentMaxY = hist->GetMaximum();
+            if (currentMaxY > maxY) {
+                maxY = currentMaxY;
+            }
+        } else {
+            std::cout << "Histogram not found: " << histName << std::endl;
+        }
+    }
+    // Second loop to draw the histograms
+    for (size_t i = 0; i < histNames.size(); ++i) {
+        TH1* hist = (TH1*)liveDir->Get(histNames[i].c_str());
+        if (hist) {
+            hist->SetLineColor(colors[i]);
+            hist->SetLineWidth(2);
+            hist->GetXaxis()->SetTitle("Maximum 8by8 Tower Energy Sum");
+            hist->SetMaximum(maxY * 1.1);  // Set a bit higher than the maximum value to ensure visibility
+            hist->SetStats(0);  // Turn off statistics box
+            
+            if (firstHist) {
+                std::cout << "Drawing first histogram: " << histNames[i] << std::endl;
+                hist->Draw("HIST");
+                firstHist = false;
+            } else {
+                std::cout << "Drawing histogram: " << histNames[i] << std::endl;
+                hist->Draw("HIST SAME");
+            }
+            
+            legend.AddEntry(hist, legendLabels[i].c_str(), "l");
+        } else {
+            std::cout << "Histogram not found in second loop: " << histNames[i] << std::endl;
+        }
+    }
+
+    legend.Draw();
+    std::string overlayOutputPath = outputDir + "/overlay_live_max8x8.png";
+    canvas.SaveAs(overlayOutputPath.c_str());
+}
+void OverlayLiveHistogramsTowerEnergySum(TDirectory* liveDir, const std::string& outputDir) {
+    // Define the histogram names and legend labels
+    std::vector<std::string> histNames = {
+        "trigger_24_live_emcal",
+        "trigger_25_live_emcal",
+        "trigger_26_live_emcal",
+        "trigger_27_live_emcal"
     };
     std::vector<std::string> legendLabels = {
         "Photon 1",
@@ -114,7 +180,6 @@ void OverlayLiveHistograms(TDirectory* liveDir, const std::string& outputDir) {
     canvas.SaveAs(overlayOutputPath.c_str());
 }
 
-
 // Main macro function
 void plotTriggerHists(const char* rootFilePath, const char* outputBaseDir) {
     // Open the root file
@@ -133,8 +198,9 @@ void plotTriggerHists(const char* rootFilePath, const char* outputBaseDir) {
             SaveHistograms(dir, outputDir);
 
             // Overlay histograms if in the 'live' directory
-            if (dirName == "live") {
-                OverlayLiveHistograms(dir, outputDir);
+            if (dirName == "scaled") {
+                OverlayLiveHistogramsMax8by8(dir, outputDir);
+                OverlayLiveHistogramsTowerEnergySum(dir, outputDir);
             }
         } else {
             std::cerr << "Warning: Directory " << dirName << " not found in file " << rootFilePath << std::endl;
