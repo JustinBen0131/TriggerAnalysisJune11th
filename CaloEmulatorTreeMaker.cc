@@ -1,4 +1,3 @@
-
 #include "CaloEmulatorTreeMaker.h"
 //for emc clusters
 #include <calobase/RawCluster.h>
@@ -9,7 +8,7 @@
 #include <calobase/RawTowerContainer.h>
 #include <mbd/MbdPmtContainerV1.h>
 #include <mbd/MbdPmtHitV1.h>
-#include <HepMC/SimpleVector.h> 
+#include <HepMC/SimpleVector.h>
 //for vetex information
 #include <globalvertex/GlobalVertex.h>
 #include <globalvertex/GlobalVertexMap.h>
@@ -35,8 +34,8 @@ CaloEmulatorTreeMaker::CaloEmulatorTreeMaker(const std::string &name, const std:
   
 {
   useCaloTowerBuilder = false;
-  useLL1=false;
-  _foutname = outfilename;  
+  useLL1=true;
+  _foutname = outfilename;
 }
 
 //____________________________________________________________________________..
@@ -151,7 +150,7 @@ int CaloEmulatorTreeMaker::Init(PHCompositeNode *topNode)
 
 
 
-  std::cout << "Done initing the treemaker"<<std::endl;  
+  std::cout << "Done initing the treemaker"<<std::endl;
   return Fun4AllReturnCodes::EVENT_OK;
 }
 
@@ -191,7 +190,7 @@ void CaloEmulatorTreeMaker::reset_tree_vars()
   b_hcalin_time.clear();
   b_hcalin_phibin.clear();
   b_hcalin_etabin.clear();
-  b_hcalout_good.clear();  
+  b_hcalout_good.clear();
   b_hcalout_energy.clear();
   b_hcalout_time.clear();
   b_hcalout_phibin.clear();
@@ -247,10 +246,10 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
     {
       GlobalVertex* vtx = vertexmap->begin()->second;
       if (vtx)
-	{
-	  vtx_z = vtx->get_z();
-	  b_vertex_z = vtx_z;
-	}
+    {
+      vtx_z = vtx->get_z();
+      b_vertex_z = vtx_z;
+    }
     }
 
   // b_vertex_x = -99;
@@ -262,20 +261,20 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
   // while (true)
   //   {
   //     if (!vtxContainer)
-  // 	{
-  // 	  break;
-  // 	}
+  //     {
+  //       break;
+  //     }
   //     if (vtxContainer->empty())
-  // 	{
-  // 	  break;
-  // 	}
+  //     {
+  //       break;
+  //     }
 
   //     //More vertex information
   //     vtx = vtxContainer->begin()->second;
   //     if(!vtx)
-  // 	{
-  // 	  break;
-  // 	}
+  //     {
+  //       break;
+  //     }
   //     b_vertex_x = vtx->get_x();
   //     b_vertex_y = vtx->get_y();
   //     b_vertex_z = vtx->get_z();
@@ -291,11 +290,11 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
       b_gl1_scaledvec = _gl1_packet->lValue(0, "ScaledVector");
       
       for (int i = 0; i < 64; i++)
-	{
-	  b_gl1_scaled[i] = _gl1_packet->lValue(i, 2);
-	  b_gl1_raw[i] = _gl1_packet->lValue(i, 0);
-	  b_gl1_live[i] = _gl1_packet->lValue(i, 1);
-	}
+    {
+      b_gl1_scaled[i] = _gl1_packet->lValue(i, 2);
+      b_gl1_raw[i] = _gl1_packet->lValue(i, 0);
+      b_gl1_live[i] = _gl1_packet->lValue(i, 1);
+    }
     }
 
   std::vector<unsigned int>::iterator it;
@@ -304,350 +303,350 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
   TriggerPrimitivev1::Range srange;
   if (_trigger_primitives_emcal)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_emcal->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_sum_emcal[i] = summ;
-	      b_trigger_sumkey_emcal[i] = sumk;
-	      b_trigger_sum_smpl_emcal[i] = sums;
-	      
-	      i++;
-	    }
-	}
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_sum_emcal[i] = summ;
+          b_trigger_sumkey_emcal[i] = sumk;
+          b_trigger_sum_smpl_emcal[i] = sums;
+          
+          i++;
+        }
+    }
     }
     
  if (_trigger_primitives_hcalin)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_hcalin->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_sum_hcalin[i] = summ;
-	      b_trigger_sumkey_hcalin[i] = sumk;
-	      b_trigger_sum_smpl_hcalin[i] = sums;
-		
-	      i++;
-	    }
-	}
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_sum_hcalin[i] = summ;
+          b_trigger_sumkey_hcalin[i] = sumk;
+          b_trigger_sum_smpl_hcalin[i] = sums;
+        
+          i++;
+        }
+    }
     }
    if (_trigger_primitives_hcalout)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_hcalout->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_sum_hcalout[i] = summ;
-	      b_trigger_sumkey_hcalout[i] = sumk;
-	      b_trigger_sum_smpl_hcalout[i] = sums;
-	
-	      i++;
-	    }
-	}
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_sum_hcalout[i] = summ;
+          b_trigger_sumkey_hcalout[i] = sumk;
+          b_trigger_sum_smpl_hcalout[i] = sums;
+    
+          i++;
+        }
+    }
     }
 
    if (_trigger_primitives_emcal_ll1)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_emcal_ll1->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_sum_emcal_ll1[i] = summ;
-	      b_trigger_sumkey_emcal_ll1[i] = sumk;
-	      b_trigger_sum_smpl_emcal_ll1[i] = sums;
-		
-	      i++;
-	    }
-	}
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_sum_emcal_ll1[i] = summ;
+          b_trigger_sumkey_emcal_ll1[i] = sumk;
+          b_trigger_sum_smpl_emcal_ll1[i] = sums;
+        
+          i++;
+        }
+    }
     }
     
  if (_trigger_primitives_hcal_ll1)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_hcal_ll1->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_sum_hcal_ll1[i] = summ;
-	      b_trigger_sumkey_hcal_ll1[i] = sumk;
-	      b_trigger_sum_smpl_hcal_ll1[i] = sums;
-	
-	      i++;
-	    }
-	}
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_sum_hcal_ll1[i] = summ;
+          b_trigger_sumkey_hcal_ll1[i] = sumk;
+          b_trigger_sum_smpl_hcal_ll1[i] = sums;
+    
+          i++;
+        }
+    }
     }
 
   if (_ll1out_trigger)
     {
-      i = 0;      
+      i = 0;
       b_triggered_sums.clear();
       b_triggered_sums = _ll1out_trigger->getTriggeredSums();
 
       LL1Outv1::Range wrange = _ll1out_trigger->getTriggerWords();
       for (LL1Outv1::Iter iter = wrange.first ; iter != wrange.second ; ++iter)
-	{
-	  std::vector<unsigned int> *trigger_word = (*iter).second;
+    {
+      std::vector<unsigned int> *trigger_word = (*iter).second;
 
-	  it = max_element(trigger_word->begin(), trigger_word->end());
-	  unsigned int summ = 0;
-	  unsigned int sumk = 0;
-	  unsigned int sums = 0;
-	      
-	  if (it != trigger_word->end())
-	    {
-	      summ = (*it);
-	      sumk = (*iter).first;
-	      sums = std::distance(trigger_word->begin(), it);
-	    }
-	  b_trigger_sum_jet[i] = summ;
-	  b_trigger_sumkey_jet[i] = sumk;
-	  b_trigger_sum_smpl_jet[i] = sums;
-	  
-	  i++;
-	}
-	
+      it = max_element(trigger_word->begin(), trigger_word->end());
+      unsigned int summ = 0;
+      unsigned int sumk = 0;
+      unsigned int sums = 0;
+          
+      if (it != trigger_word->end())
+        {
+          summ = (*it);
+          sumk = (*iter).first;
+          sums = std::distance(trigger_word->begin(), it);
+        }
+      b_trigger_sum_jet[i] = summ;
+      b_trigger_sumkey_jet[i] = sumk;
+      b_trigger_sum_smpl_jet[i] = sums;
+      
+      i++;
+    }
+    
       b_trigger_bits = 0;
       for (unsigned int tbit = 1; tbit <= 4; tbit++)
-	{
-	  b_trigger_bits |= (_ll1out_trigger->passesThreshold(tbit) ? 1U << (tbit - 0x1U): 0);
-	}
+    {
+      b_trigger_bits |= (_ll1out_trigger->passesThreshold(tbit) ? 1U << (tbit - 0x1U): 0);
+    }
     }
 
   if (_trigger_primitives_raw_emcal)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_raw_emcal->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_raw_sum_emcal[i] = summ;
-	      b_trigger_raw_sumkey_emcal[i] = sumk;
-	      b_trigger_raw_sum_smpl_emcal[i] = sums;
-	
-	      i++;
-	    }
-	}
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_raw_sum_emcal[i] = summ;
+          b_trigger_raw_sumkey_emcal[i] = sumk;
+          b_trigger_raw_sum_smpl_emcal[i] = sums;
+    
+          i++;
+        }
+    }
     }
   if (_trigger_primitives_raw_emcal_ll1)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_raw_emcal_ll1->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_raw_sum_emcal_ll1[i] = summ;
-	      b_trigger_raw_sumkey_emcal_ll1[i] = sumk;
-	      b_trigger_raw_sum_smpl_emcal_ll1[i] = sums;
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_raw_sum_emcal_ll1[i] = summ;
+          b_trigger_raw_sumkey_emcal_ll1[i] = sumk;
+          b_trigger_raw_sum_smpl_emcal_ll1[i] = sums;
 
-	      i++;
-	    }
-	}
+          i++;
+        }
+    }
     }
 
   if (_trigger_primitives_trigger)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_trigger->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_sum_jet_input[i] = summ;
-	      b_trigger_sumkey_jet_input[i] = sumk;
-	      b_trigger_sum_smpl_jet_input[i] = sums;
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_sum_jet_input[i] = summ;
+          b_trigger_sumkey_jet_input[i] = sumk;
+          b_trigger_sum_smpl_jet_input[i] = sums;
 
-	      i++;
-	    }
-	}
+          i++;
+        }
+    }
     }
   if (_trigger_primitives_raw_trigger)
     {
-      i = 0;      
+      i = 0;
       range = _trigger_primitives_raw_trigger->getTriggerPrimitives();
       for (TriggerPrimitiveContainerv1::Iter iter = range.first ; iter != range.second ; ++iter)
-	{
-	  _trigger_primitive = (*iter).second;
-	  srange = _trigger_primitive->getSums();
-	  for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
-	    {
-	      sum = (*siter).second;
-	      it = max_element(sum->begin(), sum->end());
-	      unsigned int summ = 0;
-	      unsigned int sumk = 0;
-	      unsigned int sums = 0;
-	      
-	      if (it != sum->end())
-		{
-		  summ = (*it);
-		  sumk = (*siter).first;
-		  sums = std::distance(sum->begin(), it);
-		}
-	      b_trigger_raw_sum_jet_input[i] = summ;
-	      b_trigger_raw_sumkey_jet_input[i] = sumk;
-	      b_trigger_raw_sum_smpl_jet_input[i] = sums;
+    {
+      _trigger_primitive = (*iter).second;
+      srange = _trigger_primitive->getSums();
+      for (TriggerPrimitive::Iter siter = srange.first; siter != srange.second; ++siter)
+        {
+          sum = (*siter).second;
+          it = max_element(sum->begin(), sum->end());
+          unsigned int summ = 0;
+          unsigned int sumk = 0;
+          unsigned int sums = 0;
+          
+          if (it != sum->end())
+        {
+          summ = (*it);
+          sumk = (*siter).first;
+          sums = std::distance(sum->begin(), it);
+        }
+          b_trigger_raw_sum_jet_input[i] = summ;
+          b_trigger_raw_sumkey_jet_input[i] = sumk;
+          b_trigger_raw_sum_smpl_jet_input[i] = sums;
 
-	      i++;
-	    }
-	}
+          i++;
+        }
+    }
     }
 
   if (_ll1out_raw_trigger)
     {
-      i = 0;      
+      i = 0;
       LL1Outv1::Range wrange = _ll1out_raw_trigger->getTriggerWords();
       for (LL1Outv1::Iter iter = wrange.first ; iter != wrange.second ; ++iter)
-	{
-	  if (i >= 288)
-	    {
-	      std::cout <<"bad!!"<<std::endl;
-	    }
-	  std::vector<unsigned int> *trigger_word = (*iter).second;
+    {
+      if (i >= 288)
+        {
+          std::cout <<"bad!!"<<std::endl;
+        }
+      std::vector<unsigned int> *trigger_word = (*iter).second;
 
-	  it = max_element(trigger_word->begin(), trigger_word->end());
-	  unsigned int summ = 0;
-	  unsigned int sumk = 0;
-	  unsigned int sums = 0;
-	      
-	  if (it != trigger_word->end())
-	    {
-	      summ = (*it);
-	      sumk = (*iter).first;
-	      sums = std::distance(trigger_word->begin(), it);
-	    }
-	  b_trigger_raw_sum_jet[i] = summ;
-	  b_trigger_raw_sumkey_jet[i] = sumk;
-	  b_trigger_raw_sum_smpl_jet[i] = sums;
-	  
-	  i++;
-	}
+      it = max_element(trigger_word->begin(), trigger_word->end());
+      unsigned int summ = 0;
+      unsigned int sumk = 0;
+      unsigned int sums = 0;
+          
+      if (it != trigger_word->end())
+        {
+          summ = (*it);
+          sumk = (*iter).first;
+          sums = std::distance(trigger_word->begin(), it);
+        }
+      b_trigger_raw_sum_jet[i] = summ;
+      b_trigger_raw_sumkey_jet[i] = sumk;
+      b_trigger_raw_sum_smpl_jet[i] = sums;
+      
+      i++;
+    }
       b_trigger_raw_bits = 0;
       for (unsigned int tbit = 0; tbit < 4; tbit++)
-	{
-	  b_trigger_raw_bits |= _ll1out_raw_trigger->passesThreshold(tbit);
-	}
+    {
+      b_trigger_raw_bits |= _ll1out_raw_trigger->passesThreshold(tbit);
+    }
 
     }
    
@@ -657,93 +656,93 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
       MbdPmtContainer *_pmts_mbd = findNode::getClass<MbdPmtContainer>(topNode, "MbdPmtContainer");
 
       if (_pmts_mbd)
-	{
+    {
 
-	  int npmt = 128;//_pmts_mbd->get_npmt();
-	  for ( int ipmt = 0; ipmt < npmt; ipmt++)
-	    {
-	      MbdPmtHit *_tmp_pmt = _pmts_mbd->get_pmt(ipmt);
+      int npmt = 128;//_pmts_mbd->get_npmt();
+      for ( int ipmt = 0; ipmt < npmt; ipmt++)
+        {
+          MbdPmtHit *_tmp_pmt = _pmts_mbd->get_pmt(ipmt);
 
-	      b_mbd_charge[ipmt] = _tmp_pmt->get_q();
-	      b_mbd_time[ipmt] = _tmp_pmt->get_time();
-	      b_mbd_side[ipmt] = ipmt/64;
-	      b_mbd_ipmt[ipmt] = ipmt;
-	    }
+          b_mbd_charge[ipmt] = _tmp_pmt->get_q();
+          b_mbd_time[ipmt] = _tmp_pmt->get_time();
+          b_mbd_side[ipmt] = ipmt/64;
+          b_mbd_ipmt[ipmt] = ipmt;
+        }
 
-	}
+    }
       _towers = findNode::getClass<TowerInfoContainer>(topNode, "TOWERINFO_CALIB_HCALIN");
 
       int size;
       if (_towers)
-	{
+    {
 
-	  size = _towers->size(); //online towers should be the same!
-	  for (int channel = 0; channel < size;channel++)
-	    {
-	      _tower = _towers->get_tower_at_channel(channel);
-	      float energy = _tower->get_energy();
-	      float time = _tower->get_time();	  
-	      short good = (_tower->get_isGood() ? 1:0);
-	      unsigned int towerkey = _towers->encode_key(channel);
-	      int ieta = _towers->getTowerEtaBin(towerkey);
-	      int iphi = _towers->getTowerPhiBin(towerkey);
+      size = _towers->size(); //online towers should be the same!
+      for (int channel = 0; channel < size;channel++)
+        {
+          _tower = _towers->get_tower_at_channel(channel);
+          float energy = _tower->get_energy();
+          float time = _tower->get_time();
+          short good = (_tower->get_isGood() ? 1:0);
+          unsigned int towerkey = _towers->encode_key(channel);
+          int ieta = _towers->getTowerEtaBin(towerkey);
+          int iphi = _towers->getTowerPhiBin(towerkey);
 
-	      b_hcalin_good.push_back(good);
-	      b_hcalin_energy.push_back(energy);
-	      b_hcalin_time.push_back(time);
-	      b_hcalin_etabin.push_back(ieta);
-	      b_hcalin_phibin.push_back(iphi);
-	    }
-	}
+          b_hcalin_good.push_back(good);
+          b_hcalin_energy.push_back(energy);
+          b_hcalin_time.push_back(time);
+          b_hcalin_etabin.push_back(ieta);
+          b_hcalin_phibin.push_back(iphi);
+        }
+    }
       _towers = findNode::getClass<TowerInfoContainer>(topNode, "TOWERINFO_CALIB_HCALOUT");
       if (_towers)
-	{
+    {
 
-	  size = _towers->size(); //online towers should be the same!
-	  for (int channel = 0; channel < size;channel++)
-	    {
-	      _tower = _towers->get_tower_at_channel(channel);
-	      float energy = _tower->get_energy();
-	      float time = _tower->get_time();	  
-	      unsigned int towerkey = _towers->encode_key(channel);
-	      int ieta = _towers->getTowerEtaBin(towerkey);
-	      int iphi = _towers->getTowerPhiBin(towerkey);
-	      short good = (_tower->get_isGood() ? 1:0);
-	      b_hcalout_good.push_back(good);
-	      b_hcalout_energy.push_back(energy);
-	      b_hcalout_time.push_back(time);
-	      b_hcalout_etabin.push_back(ieta);
-	      b_hcalout_phibin.push_back(iphi);
-	    }
-	}
+      size = _towers->size(); //online towers should be the same!
+      for (int channel = 0; channel < size;channel++)
+        {
+          _tower = _towers->get_tower_at_channel(channel);
+          float energy = _tower->get_energy();
+          float time = _tower->get_time();
+          unsigned int towerkey = _towers->encode_key(channel);
+          int ieta = _towers->getTowerEtaBin(towerkey);
+          int iphi = _towers->getTowerPhiBin(towerkey);
+          short good = (_tower->get_isGood() ? 1:0);
+          b_hcalout_good.push_back(good);
+          b_hcalout_energy.push_back(energy);
+          b_hcalout_time.push_back(time);
+          b_hcalout_etabin.push_back(ieta);
+          b_hcalout_phibin.push_back(iphi);
+        }
+    }
       _towers = findNode::getClass<TowerInfoContainer>(topNode, "TOWERINFO_CALIB_CEMC");
       if (_towers)
-	{
-	  size = _towers->size(); //online towers should be the same!
-	  for (int channel = 0; channel < size;channel++)
-	    {
-	      _tower = _towers->get_tower_at_channel(channel);
-	      float energy = _tower->get_energy();
-	      float time = _tower->get_time();
-	      unsigned int towerkey = _towers->encode_key(channel);
-	      int ieta = _towers->getTowerEtaBin(towerkey);
-	      int iphi = _towers->getTowerPhiBin(towerkey);
-	      short good = (_tower->get_isGood() ? 1:0);
-	      b_emcal_good.push_back(good);
-	      b_emcal_energy.push_back(energy);
-	      b_emcal_time.push_back(time);
-	      b_emcal_etabin.push_back(ieta);
-	      b_emcal_phibin.push_back(iphi);
-	    }
-	}
+    {
+      size = _towers->size(); //online towers should be the same!
+      for (int channel = 0; channel < size;channel++)
+        {
+          _tower = _towers->get_tower_at_channel(channel);
+          float energy = _tower->get_energy();
+          float time = _tower->get_time();
+          unsigned int towerkey = _towers->encode_key(channel);
+          int ieta = _towers->getTowerEtaBin(towerkey);
+          int iphi = _towers->getTowerPhiBin(towerkey);
+          short good = (_tower->get_isGood() ? 1:0);
+          b_emcal_good.push_back(good);
+          b_emcal_energy.push_back(energy);
+          b_emcal_time.push_back(time);
+          b_emcal_etabin.push_back(ieta);
+          b_emcal_phibin.push_back(iphi);
+        }
     }
-   {   
+    }
+   {
 
      RawClusterContainer* clusterContainer = findNode::getClass<RawClusterContainer>(topNode, "CLUSTERINFO_CEMC");
      if (!clusterContainer)
        {
-	 std::cout << PHWHERE << "funkyCaloStuff::process_event - Fatal Error - CLUSTER_CEMC node is missing. " << std::endl;
-	 return 0;
+     std::cout << PHWHERE << "funkyCaloStuff::process_event - Fatal Error - CLUSTER_CEMC node is missing. " << std::endl;
+     return 0;
        }
 
      //////////////////////////////////////////
@@ -752,10 +751,10 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
      RawTowerGeomContainer* m_geometry = findNode::getClass<RawTowerGeomContainer>(topNode, towergeomnodename);
      if (!m_geometry)
        {
-	 std::cout << Name() << "::"
-		   << "CreateNodeTree"
-		   << ": Could not find node " << towergeomnodename << std::endl;
-	 throw std::runtime_error("failed to find TOWERGEOM node in RawClusterDeadHotMask::CreateNodeTree");
+     std::cout << Name() << "::"
+           << "CreateNodeTree"
+           << ": Could not find node " << towergeomnodename << std::endl;
+     throw std::runtime_error("failed to find TOWERGEOM node in RawClusterDeadHotMask::CreateNodeTree");
        }
 
      RawClusterContainer::ConstRange clusterEnd = clusterContainer->getClusters();
@@ -764,29 +763,29 @@ int CaloEmulatorTreeMaker::process_event(PHCompositeNode *topNode)
      
      for (clusterIter = clusterEnd.first; clusterIter != clusterEnd.second; clusterIter++)
        {
-	 RawCluster* recoCluster = clusterIter->second;
+     RawCluster* recoCluster = clusterIter->second;
 
-	 CLHEP::Hep3Vector vertex(0, 0, vtx_z);
-	 CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*recoCluster, vertex);
+     CLHEP::Hep3Vector vertex(0, 0, vtx_z);
+     CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*recoCluster, vertex);
 
 
-	 
-	 double e   = E_vec_cluster.mag();
-	 double phi = E_vec_cluster.phi();
-	 double eta   = E_vec_cluster.pseudoRapidity();
-	 double pt  = E_vec_cluster.perp();
-	 float prob = recoCluster->get_prob();
-	 float chi2 = recoCluster->get_chi2();
-	 float iso = recoCluster->get_et_iso();
-	 if (pt < 0.3) continue;
-	 b_cluster_n++;	 
-	 b_cluster_ecore.push_back(e);
-	 b_cluster_pt.push_back(pt);
-	 b_cluster_phi.push_back(phi);
-	 b_cluster_eta.push_back(eta);
-	 b_cluster_prob.push_back(prob);
-	 b_cluster_chi2.push_back(chi2);
-	 b_cluster_iso.push_back(iso);
+     
+     double e   = E_vec_cluster.mag();
+     double phi = E_vec_cluster.phi();
+     double eta   = E_vec_cluster.pseudoRapidity();
+     double pt  = E_vec_cluster.perp();
+     float prob = recoCluster->get_prob();
+     float chi2 = recoCluster->get_chi2();
+     float iso = recoCluster->get_et_iso();
+     if (pt < 0.3) continue;
+     b_cluster_n++;
+     b_cluster_ecore.push_back(e);
+     b_cluster_pt.push_back(pt);
+     b_cluster_phi.push_back(phi);
+     b_cluster_eta.push_back(eta);
+     b_cluster_prob.push_back(prob);
+     b_cluster_chi2.push_back(chi2);
+     b_cluster_iso.push_back(iso);
        }
    }
    
