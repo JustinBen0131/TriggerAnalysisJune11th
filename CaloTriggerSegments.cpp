@@ -7,7 +7,7 @@
 #include <map>
 #include <bitset>
 #include "TriggerDefs.h"
-
+//
 R__LOAD_LIBRARY(libcalotrigger.so)
 R__LOAD_LIBRARY(libtriggervalid.so)
 
@@ -30,6 +30,14 @@ void CaloTriggerSegments(const char* filename, const char* output_filename, Long
         return;
     }
     std::cout << "TTree 'ttree' loaded successfully." << std::endl;
+
+    // Declare arrays to hold the branch data
+    unsigned int trigger_sumkey_emcal[6144];
+    unsigned int trigger_sumkey_emcal_ll1[384];
+
+    // Set the branch addresses
+    tree->SetBranchAddress("trigger_sumkey_emcal", trigger_sumkey_emcal);
+    tree->SetBranchAddress("trigger_sumkey_emcal_ll1", trigger_sumkey_emcal_ll1);
 
     ULong64_t gl1_scaled[64], gl1_live[64];
     ULong64_t gl1_scaledvec;
@@ -75,7 +83,8 @@ void CaloTriggerSegments(const char* filename, const char* output_filename, Long
                     histograms_energy[j]->Fill(maxEnergy, scaleFactor);
                     std::cout << "Max Energy: " << maxEnergy << " added to histogram." << std::endl;
                 }
-            }cat c
+            
+           }
         }
     }
 
